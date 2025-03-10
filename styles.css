@@ -1,0 +1,137 @@
+body{
+    background-color: #f8f9fa;
+    Color: #1a1a19;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.goal {
+  margin-bottom: 20px;
+  width: 100%;
+  text-align: center;
+  max-width: 400px;
+}
+
+.author{
+  text-align: center;
+}
+
+mark {
+  background-color: #6ea2d9;
+  color: rgb(23, 27, 36);
+}
+
+.calculator_container{
+    text-align: center;
+    width: 100%;
+    max-width: 400px;
+}
+
+.calculator{
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px #7d8fb3;
+    background-color: #f8f9fa;
+    Color: #1a1a19;
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.my-btn { 
+    margin-right: 5px;
+    margin-top: 5px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50px;
+    border-color: transparent;
+    border-style:solid;
+    background: #7d8fb3;
+    color: white;   
+    /*font-weight: bolder;*/
+    font-size: 1.5rem;
+    font-family: Arial, Helvetica, sans-serif;
+    cursor: pointer;             
+    user-select: none;
+  } 
+  
+  .my-btn:hover {
+    background: transparent;
+    color: #7d8fb3;
+    border-color: #7d8fb3;
+  }
+  
+  .my-btn:active {
+    filter: brightness(130%);
+  }
+  
+  .my-btn.primary { 
+    background: #1562d3;
+    /*font-weight: bold;*/
+  }
+  .my-btn.primary:hover { 
+    background: transparent;
+    color: #1562d3;
+    border-color: #1562d3;
+  }
+  .my-btn.change { 
+    background: #006cdc;
+    width: 100px;
+    height: 60px;
+    font-size: 1rem;
+  }
+
+  .my-btn.change:hover { 
+    background: #1198ff1c;
+    color: #006cdc;
+    border-color: #006cdc;
+  }
+  
+  .my-btn.secondary { 
+    background: #006cdc;
+    font-weight:lighter;
+  }
+
+  .my-btn.secondary:hover { 
+    background: transparent;
+    color: #006cdc;
+    border-color: #006cdc;
+  }
+  
+  .my-btn.execute { 
+    width: 110px;
+  }
+  
+  .drop_list{
+    background: #006cdc;
+    width: 200px;
+    height: 40px;
+    font-size: 1rem;
+    text-align: center;
+    color: white;
+  }
+
+  .drop_list:hover{
+    background-color: #3684d8;
+  }
+
+  .buttons{
+    display: flex;
+  }
+  
+  .result { 
+    width: 240px;
+    height: 40px;
+    border-radius: 12px; 
+    margin-bottom: 15px;
+    padding-right: 10px;
+    background: rgb(203, 220, 225);
+    text-align: right;
+    color: #1b2335;
+    font-size: 1.5rem;
+    font-family: Arial, Helvetica, sans-serif;
+  }
