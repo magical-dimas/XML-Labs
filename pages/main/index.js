@@ -5,8 +5,8 @@ export class MainPage {
     constructor(parent) {
         this.parent = parent;
         this.data = this.getData();
-        this.min = 0;
-        this.max = 100;
+        this.min_departments = 0;
+        this.max_departments = 100;
     }
 
     get pageRoot() {
@@ -17,13 +17,27 @@ export class MainPage {
         return (
             `
                 <div id="main_page" class="main_page">
+                    <div class="department_data">
                     <div class="inp_form">
-                        <p class="plain_text"> Количество кафедр на факультете: от </p>
+                        <p class="plain_text" style="font-weight: bolder;"> Количество кафедр на факультете: от </p>
                         <input type="number" class="inp_num" id="min_num" placeholder="минимум" min="0">
-                        <p class="plain_text"> до </p>
+                        <p class="plain_text" style="font-weight: bolder;"> до </p>
                         <input type="number" class="inp_num" id="max_num" placeholder="максимум" min="0">
                         <button class="btn" id="new_card">Создать</button>
                         <button class="btn" id="delete_card">Удалить</button>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <p class="plain_text" style="font-weight: bolder;"> Статистика выводимых факультетов по кафедрам: </p>
+                        <p class="result" id="sum"> Сумма - x </p>
+                        <div>
+                        <p class="result" id="mul"> Произведение - x </p>
+                        <p class="result" id="sq_sum"> Сумма квадратов - x </p>
+                    </div>
+                    <div class="col" style="text-align: center;">
+                        <p class="plain_text" style="font-weight: bolder;"> Интервалы количества кафедр, принадлежащих факультетам: </p>
+                        <p class="result" id="dep_intervals"></p>
+                    </div>
+                    </div>
                     </div>
                     <div class="gallery"></div>
                 </div>
@@ -65,9 +79,16 @@ export class MainPage {
     }
 
     render() {
+        const departments = [12, 7, 13, 13, 5, 6, 9, 12, 4, 5, 6, 2, 1];
+        const dep_intervals = this.convert_to_intervals(new Set(departments.sort(function(a, b) {
+            return a - b;
+          })));
+
         this.parent.innerHTML = ''
         const html = this.getHTML()
         this.parent.insertAdjacentHTML('beforeend', html)
+
+        document.getElementById("dep_intervals").innerHTML = dep_intervals;
 
         const new_card = this.pageRoot.querySelector('#new_card');
         const delete_card = this.pageRoot.querySelector('#delete_card');
@@ -81,33 +102,38 @@ export class MainPage {
         new_card.addEventListener('click', this.addCard.bind(this));
         delete_card.addEventListener('click', this.removeCard.bind(this));
 
-        const data = this.getData()
-        data.forEach((item) => {
-            const productCard = new ProductCardComponent(this.pageRoot.querySelector('.gallery'))
-            productCard.render(item, this.clickCard.bind(this))
-        })
+        this.update_statistics(this.filter());
     }
 
-    update_min(e){
-        this.min = parseInt(e.target.value);
-        if(e.target.value=="") this.min = 0;
-        this.filter();
+    update_min(input_text){
+        this.min_departments = parseInt(input_text.target.value);
+        if(input_text.target.value=="") this.min_departments = 0;
+        this.update_statistics(this.filter());
     }
 
-    update_max(e){
-        this.max = parseInt(e.target.value);
-        if(e.target.value=="") this.max = 100;
-        this.filter();
+    update_max(input_text){
+        this.max_departments = parseInt(input_text.target.value);
+        if(input_text.target.value=="") this.max_departments = 100;
+        this.update_statistics(this.filter());
+    }
+
+    update_statistics(arr){
+        document.getElementById("sum").innerHTML = "Сумма - "+this.getSumAndMultOfArray(arr).sum;
+        document.getElementById("mul").innerHTML = "Произведение - "+this.getSumAndMultOfArray(arr).mult;
+        document.getElementById("sq_sum").innerHTML = "Сумма квадратов - "+this.sumOfSquares(arr);
     }
 
     filter(){
         this.pageRoot.querySelector('.gallery').innerHTML = "";
+        let nums = [];
         this.data.forEach((item) => {
-            if(item.num>=this.min && item.num<=this.max){
+            if(item.num>=this.min_departments && item.num<=this.max_departments){
                 const productCard = new ProductCardComponent(this.pageRoot.querySelector('.gallery'))
                 productCard.render(item, this.clickCard.bind(this))
+                nums.push(item.num)
             }
         })
+        return nums
     }
 
     clickCard(e) {
@@ -124,6 +150,7 @@ export class MainPage {
         const gallery = this.pageRoot.querySelector('.gallery');
         const card = new ProductCardComponent(gallery);
         card.render(newCardData, this.clickCard.bind(this));
+        this.update_statistics(this.filter());
     }
 
     removeCard() {
@@ -132,6 +159,58 @@ export class MainPage {
 
             const gallery = this.pageRoot.querySelector('.gallery');
             gallery.lastElementChild.remove();
+            this.update_statistics(this.filter());
         }
+    }
+
+    convert_to_intervals(set){
+        let iter = set.values()
+        let unit = iter.next()
+        let prev = unit.value
+        let unchanged = true
+        let intervals = prev.toString()
+        unit = iter.next()
+        while(!unit.done){
+            if(unit.value-prev!=1){
+                if(unchanged){
+                    intervals+=", "+unit.value
+                }
+                else{
+                    intervals+="-"+prev+", "+unit.value
+                }
+                unchanged = true
+            }
+            else{
+                unchanged = false
+            }
+            prev = unit.value
+            unit = iter.next()
+        }
+        if(!unchanged){
+            intervals+="-"+prev
+        }
+        return intervals
+    }
+
+    getSumAndMultOfArray(arr){
+        let s = 0;
+        let m = 1;
+        for(let i = 0; i<arr.length; i++){
+            s+=arr[i];
+            m*=arr[i];
+        }
+        if(s==0 && m==1) m = 0;
+        return {
+            sum: s,
+            mult: m
+        };
+    }
+
+    sumOfSquares(arr){
+        let res = 0;
+        for(let i = 0; i<arr.length; i++){
+            res+=arr[i]*arr[i];
+        }
+        return res;
     }
 }

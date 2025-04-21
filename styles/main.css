@@ -14,15 +14,19 @@ body{
   padding: 0px;
 }
 
+.department_data{
+  border: 2px solid #e8f0f7;
+  border-radius: 10px;
+  gap: 5px;
+  margin-bottom: 15px;
+}
+
 .inp_form{
   display: flex;
   flex-direction: row;
   gap: 5px;
 
   padding: 10px;
-  margin-bottom: 15px;
-  border-radius: 10px;
-  border: 2px solid #e8f0f7;
   background-color: #f8f9fa;
   Color: #1a1a19;
   width: 900px;
@@ -99,6 +103,12 @@ body{
 
 .plain_text{
   margin: auto;
+}
+
+.result{
+  margin: auto;
+  font-size: 1.1rem;
+  color:#1562d3;
 }
 
 .card_title{
