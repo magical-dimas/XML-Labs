@@ -23,7 +23,6 @@ export class MainPage {
                         <p class="plain_text"> до </p>
                         <input type="number" class="inp_num" id="max_num" placeholder="максимум" min="0">
                         <button class="btn" id="new_card">Создать</button>
-                        <button class="btn" id="delete_card">Удалить</button>
                     </div>
                     <div class="gallery"></div>
                 </div>
@@ -79,12 +78,11 @@ export class MainPage {
         in_max.addEventListener("input", this.update_max.bind(this));
 
         new_card.addEventListener('click', this.addCard.bind(this));
-        delete_card.addEventListener('click', this.removeCard.bind(this));
 
         const data = this.getData()
         data.forEach((item) => {
             const productCard = new ProductCardComponent(this.pageRoot.querySelector('.gallery'))
-            productCard.render(item, this.clickCard.bind(this))
+            productCard.render(item, this.clickCard.bind(this), this.removeCard.bind(this))
         })
     }
 
@@ -105,7 +103,7 @@ export class MainPage {
         this.data.forEach((item) => {
             if(item.num>=this.min && item.num<=this.max){
                 const productCard = new ProductCardComponent(this.pageRoot.querySelector('.gallery'))
-                productCard.render(item, this.clickCard.bind(this))
+                productCard.render(item, this.clickCard.bind(this), this.removeCard.bind(this))
             }
         })
     }
@@ -118,20 +116,20 @@ export class MainPage {
     }
 
     addCard(){
-        const newCardData = {...this.data[0], id: 1};
+        const newCardData = {...this.data[0], id: this.data[this.data.length-1].id+1};
         this.data.push(newCardData);
 
         const gallery = this.pageRoot.querySelector('.gallery');
         const card = new ProductCardComponent(gallery);
-        card.render(newCardData, this.clickCard.bind(this));
+        card.render(newCardData, this.clickCard.bind(this), this.removeCard.bind(this));
     }
 
-    removeCard() {
+    removeCard(e) {
         if (this.data.length > 1) {
-            this.data.pop();
-
-            const gallery = this.pageRoot.querySelector('.gallery');
-            gallery.lastElementChild.remove();
+            const id = e.target.dataset.id-1
+            this.data.splice(this.data.findIndex((d)=> d.id==id+1), 1)
+            
+            this.filter()
         }
     }
 }

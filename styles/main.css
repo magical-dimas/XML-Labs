@@ -25,7 +25,7 @@ body{
   border: 2px solid #e8f0f7;
   background-color: #f8f9fa;
   Color: #1a1a19;
-  width: 900px;
+  width: 820px;
   align-items: center;
 }
 
@@ -88,7 +88,7 @@ body{
   font-family: Arial, Helvetica, sans-serif;
   cursor: pointer;
   user-select: none;
-  margin: auto;
+  margin:auto;
 }
 
 .btn:hover {

@@ -17,6 +17,6 @@
   },
   "homepage": "https://github.com/magical-dimas/XML-Labs#readme",
   "dependencies": {
-    "bootstrap": "^5.3.3"
+    "bootstrap": "^5.3.5"
   }
 }

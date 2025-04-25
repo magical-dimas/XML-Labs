@@ -12,22 +12,28 @@ export class ProductCardComponent {
                         <h5 class="card_title">${data.title}</h5>
                         <p class="card_text">${data.text}</p>
                         <p class="department_num">Количество кафедр: ${data.num}</p>
-                        <button class="btn" id="click-card-${data.id}" data-id="${data.id}">Подробнее</button>
+                        <div style="display: flex; justify-content:space-between;">
+                            <button class="btn" id="click-card-${data.id}" data-id="${data.id}">Подробнее</button>
+                            <button class="btn" id="delete-card-${data.id}" data-id="${data.id}">Удалить</button>
+                        </div>
                     </div>
                 </div>
             `
         )
     }
     
-    addListeners(data, listener) {
+    addListeners(data, listener1, listener2) {
         document
             .getElementById(`click-card-${data.id}`)
-            .addEventListener("click", listener)
+            .addEventListener("click", listener1)
+        document
+            .getElementById(`delete-card-${data.id}`)
+            .addEventListener("click", listener2)
     }
     
-    render(data, listener) {
+    render(data, listener1, listener2) {
         const html = this.getHTML(data)
         this.parent.insertAdjacentHTML('beforeend', html)
-        this.addListeners(data, listener)
+        this.addListeners(data, listener1, listener2)
     }
 }
