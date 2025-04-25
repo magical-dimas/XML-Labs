@@ -1,12 +1,12 @@
-import { ProductCardComponent } from "../../components/product-card/index.js";
-import { ProductPage } from "../product/index.js";
+import { FacultyCardComponent } from "../../components/faculty-card/index.js";
+import { FacultyPage } from "../faculty/index.js";
 
 export class MainPage {
     constructor(parent) {
         this.parent = parent;
         this.data = this.getData();
-        this.min = 0;
-        this.max = 100;
+        this.min_filter = 0;
+        this.max_filter = 100;
     }
 
     get pageRoot() {
@@ -68,51 +68,50 @@ export class MainPage {
         const html = this.getHTML()
         this.parent.insertAdjacentHTML('beforeend', html)
 
-        const new_card = this.pageRoot.querySelector('#new_card');
-        const delete_card = this.pageRoot.querySelector('#delete_card');
+        const new_card_btn = document.getElementById("new_card");
 
-        const in_min = document.getElementById("min_num");
-        const in_max = document.getElementById("max_num");
+        const inp_min = document.getElementById("min_num");
+        const inp_max = document.getElementById("max_num");
 
-        in_min.addEventListener("input", this.update_min.bind(this));
-        in_max.addEventListener("input", this.update_max.bind(this));
+        inp_min.addEventListener("input", this.update_min.bind(this));
+        inp_max.addEventListener("input", this.update_max.bind(this));
 
-        new_card.addEventListener('click', this.addCard.bind(this));
+        new_card_btn.addEventListener('click', this.addCard.bind(this));
 
         const data = this.getData()
         data.forEach((item) => {
-            const productCard = new ProductCardComponent(this.pageRoot.querySelector('.gallery'))
-            productCard.render(item, this.clickCard.bind(this), this.removeCard.bind(this))
+            const facultyCard = new FacultyCardComponent(this.pageRoot.querySelector('.gallery'))
+            facultyCard.render(item, this.openCard.bind(this), this.removeCard.bind(this))
         })
     }
 
     update_min(e){
-        this.min = parseInt(e.target.value);
-        if(e.target.value=="") this.min = 0;
+        this.min_filter = parseInt(e.target.value);
+        if(e.target.value=="") this.min_filter = 0;
         this.filter();
     }
 
     update_max(e){
-        this.max = parseInt(e.target.value);
-        if(e.target.value=="") this.max = 100;
+        this.max_filter = parseInt(e.target.value);
+        if(e.target.value=="") this.max_filter = 100;
         this.filter();
     }
 
     filter(){
         this.pageRoot.querySelector('.gallery').innerHTML = "";
         this.data.forEach((item) => {
-            if(item.num>=this.min && item.num<=this.max){
-                const productCard = new ProductCardComponent(this.pageRoot.querySelector('.gallery'))
-                productCard.render(item, this.clickCard.bind(this), this.removeCard.bind(this))
+            if(item.num>=this.min_filter && item.num<=this.max_filter){
+                const facultyCard = new FacultyCardComponent(this.pageRoot.querySelector('.gallery'))
+                facultyCard.render(item, this.openCard.bind(this), this.removeCard.bind(this))
             }
         })
     }
 
-    clickCard(e) {
+    openCard(e) {
         const cardId = e.target.dataset.id
 
-        const productPage = new ProductPage(this.parent, cardId)
-        productPage.render()
+        const facultyPage = new FacultyPage(this.parent, cardId)
+        facultyPage.render()
     }
 
     addCard(){
@@ -120,7 +119,7 @@ export class MainPage {
         this.data.push(newCardData);
 
         const gallery = this.pageRoot.querySelector('.gallery');
-        const card = new ProductCardComponent(gallery);
+        const card = new FacultyCardComponent(gallery);
         card.render(newCardData, this.clickCard.bind(this), this.removeCard.bind(this));
     }
 

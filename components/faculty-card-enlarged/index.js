@@ -1,4 +1,4 @@
-export class ProductComponent {
+export class FacultyComponent {
     constructor(parent) {
         this.parent = parent
     }
@@ -14,7 +14,7 @@ export class ProductComponent {
                         <div class="col-md-8">
                             <div class="card_body">
                                 <h5 class="card_title">${data.title}</h5>
-                                <p class="card_text">${data.text}</p>
+                                <p class="card_text">${data.description}</p>
                                 <p class="department_num">Количество кафедр на факультете: ${data.num}</p>
                             </div>
                         </div>
