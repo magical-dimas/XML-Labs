@@ -1,12 +1,13 @@
-import { ProductCardComponent } from "../../components/product-card/index.js";
-import { ProductPage } from "../product/index.js";
+import { FacultyCardComponent } from "../../components/faculty-card/index.js";
+import { FacultyPage } from "../faculty/index.js";
+import { model } from "../../main.js";
+import { getSumAndMultOfArray, convertToIntervals, sumOfSquares } from "../../functions/functions.js";
 
 export class MainPage {
-    constructor(parent) {
+    constructor(parent, model) {
         this.parent = parent;
-        this.data = this.getData();
-        this.min_departments = 0;
-        this.max_departments = 100;
+        this.min_filter = 0;
+        this.max_filter = 100;
     }
 
     get pageRoot() {
@@ -24,16 +25,15 @@ export class MainPage {
                         <p class="plain_text" style="font-weight: bolder;"> до </p>
                         <input type="number" class="inp_num" id="max_num" placeholder="максимум" min="0">
                         <button class="btn" id="new_card">Создать</button>
-                        <button class="btn" id="delete_card">Удалить</button>
                     </div>
-                    <div class="col" style="text-align: center;">
+                    <div style="text-align: center;">
                         <p class="plain_text" style="font-weight: bolder;"> Статистика выводимых факультетов по кафедрам: </p>
                         <p class="result" id="sum"> Сумма - x </p>
                         <div>
                         <p class="result" id="mul"> Произведение - x </p>
                         <p class="result" id="sq_sum"> Сумма квадратов - x </p>
                     </div>
-                    <div class="col" style="text-align: center;">
+                    <div style="text-align: center;">
                         <p class="plain_text" style="font-weight: bolder;"> Интервалы количества кафедр, принадлежащих факультетам: </p>
                         <p class="result" id="dep_intervals"></p>
                     </div>
@@ -45,172 +45,78 @@ export class MainPage {
         )
     }
 
-    getData() {
-        return [
-            {
-                id: 1,
-                src: "https://api.www.bmstu.ru/upload/faculty/1/64f737e27ab0a.png",
-                title: "ИУ Информатика и системы управления",
-                text: "Ведущий факультет по подготовке кадров в области искусственного интеллекта, обработки...",
-                num: 12
-            },
-            {
-                id: 2,
-                src: "https://api.www.bmstu.ru/upload/faculty/8/64bf9c5c296a8.png",
-                title: "РК Робототехника и комплексная автоматизация",
-                text: "Факультет основан в 1987 году как ответ на общемировые...",
-                num: 9
-            },
-            {
-                id: 3,
-                src: "https://api.www.bmstu.ru/upload/faculty/4/64bf9c3652db0.png",
-                title: "СМ Специальное машиностроение",
-                text: "Ведущий факультет по подготовке кадров в следующих областях...",
-                num: 13
-            },
-            {
-                id: 4,
-                src: "https://api.www.bmstu.ru/upload/faculty/6/64bf9c4902832.png",
-                title: "РЛ Радиоэлектроника и лазерная техника",
-                text: "Радиоэлектроника и лазерная техника являются самыми передовыми...",
-                num: 6
-            },
-        ]
-    }
-
     render() {
-        const departments = [12, 7, 13, 13, 5, 6, 9, 12, 4, 5, 6, 2, 1];
-        const dep_intervals = this.convert_to_intervals(new Set(departments.sort(function(a, b) {
-            return a - b;
-          })));
-
         this.parent.innerHTML = ''
         const html = this.getHTML()
         this.parent.insertAdjacentHTML('beforeend', html)
 
-        document.getElementById("dep_intervals").innerHTML = dep_intervals;
+        const new_card_btn = document.getElementById("new_card")
+        const inp_min = document.getElementById("min_num")
+        const inp_max = document.getElementById("max_num")
 
-        const new_card = this.pageRoot.querySelector('#new_card');
-        const delete_card = this.pageRoot.querySelector('#delete_card');
+        inp_min.addEventListener("input", this.updateMin.bind(this))
+        inp_max.addEventListener("input", this.updateMax.bind(this))
+        new_card_btn.addEventListener('click', this.addCard.bind(this))
 
-        const in_min = document.getElementById("min_num");
-        const in_max = document.getElementById("max_num");
-
-        in_min.addEventListener("input", this.update_min.bind(this));
-        in_max.addEventListener("input", this.update_max.bind(this));
-
-        new_card.addEventListener('click', this.addCard.bind(this));
-        delete_card.addEventListener('click', this.removeCard.bind(this));
-
-        this.update_statistics(this.filter());
+        this.drawCards()
+        this.updateStatistics()
     }
 
-    update_min(input_text){
-        this.min_departments = parseInt(input_text.target.value);
-        if(input_text.target.value=="") this.min_departments = 0;
-        this.update_statistics(this.filter());
-    }
-
-    update_max(input_text){
-        this.max_departments = parseInt(input_text.target.value);
-        if(input_text.target.value=="") this.max_departments = 100;
-        this.update_statistics(this.filter());
-    }
-
-    update_statistics(arr){
-        document.getElementById("sum").innerHTML = "Сумма - "+this.getSumAndMultOfArray(arr).sum;
-        document.getElementById("mul").innerHTML = "Произведение - "+this.getSumAndMultOfArray(arr).mult;
-        document.getElementById("sq_sum").innerHTML = "Сумма квадратов - "+this.sumOfSquares(arr);
-    }
-
-    filter(){
+    drawCards(){
         this.pageRoot.querySelector('.gallery').innerHTML = "";
-        let nums = [];
-        this.data.forEach((item) => {
-            if(item.num>=this.min_departments && item.num<=this.max_departments){
-                const productCard = new ProductCardComponent(this.pageRoot.querySelector('.gallery'))
-                productCard.render(item, this.clickCard.bind(this))
-                nums.push(item.num)
-            }
+        model.filter(this.min_filter, this.max_filter).forEach((item)=>{
+            const facultyCard = new FacultyCardComponent(this.pageRoot.querySelector('.gallery'))
+            facultyCard.render(item, this.openCard.bind(this), this.removeCard.bind(this))
         })
-        return nums
     }
 
-    clickCard(e) {
-        const cardId = e.target.dataset.id
+    updateMin(e){
+        this.min_filter = parseInt(e.target.value)
+        if(e.target.value=="") this.min_filter = 0
+        this.drawCards()
+        this.updateStatistics()
+    }
 
-        const productPage = new ProductPage(this.parent, cardId)
-        productPage.render()
+    updateMax(e){
+        this.max_filter = parseInt(e.target.value)
+        if(e.target.value=="") this.max_filter = 100
+        this.drawCards()
+        this.updateStatistics()
+    }
+
+    openCard(e) {
+        const cardId = e.target.dataset.id
+        const facultyPage = new FacultyPage(this.parent, cardId)
+        facultyPage.render()
     }
 
     addCard(){
-        const newCardData = {...this.data[0], id: 1};
-        this.data.push(newCardData);
-
-        const gallery = this.pageRoot.querySelector('.gallery');
-        const card = new ProductCardComponent(gallery);
-        card.render(newCardData, this.clickCard.bind(this));
-        this.update_statistics(this.filter());
+        model.newFaculty()
+        this.drawCards()
+        this.updateStatistics()
     }
 
-    removeCard() {
-        if (this.data.length > 1) {
-            this.data.pop();
-
-            const gallery = this.pageRoot.querySelector('.gallery');
-            gallery.lastElementChild.remove();
-            this.update_statistics(this.filter());
-        }
+    removeCard(e) {
+        model.removeFaculty(e.target.dataset.id-1)
+        this.drawCards()
+        this.updateStatistics()
     }
 
-    convert_to_intervals(set){
-        let iter = set.values()
-        let unit = iter.next()
-        let prev = unit.value
-        let unchanged = true
-        let intervals = prev.toString()
-        unit = iter.next()
-        while(!unit.done){
-            if(unit.value-prev!=1){
-                if(unchanged){
-                    intervals+=", "+unit.value
-                }
-                else{
-                    intervals+="-"+prev+", "+unit.value
-                }
-                unchanged = true
-            }
-            else{
-                unchanged = false
-            }
-            prev = unit.value
-            unit = iter.next()
-        }
-        if(!unchanged){
-            intervals+="-"+prev
-        }
-        return intervals
-    }
+    updateStatistics(){
+        var departmentArr = model.getDepartmentData(this.min_filter, this.max_filter)
+        document.getElementById("sum").innerHTML = "Сумма - "+getSumAndMultOfArray(departmentArr).sum
+        document.getElementById("mul").innerHTML = "Произведение - "+getSumAndMultOfArray(departmentArr).mult
+        document.getElementById("sq_sum").innerHTML = "Сумма квадратов - "+sumOfSquares(departmentArr)
 
-    getSumAndMultOfArray(arr){
-        let s = 0;
-        let m = 1;
-        for(let i = 0; i<arr.length; i++){
-            s+=arr[i];
-            m*=arr[i];
-        }
-        if(s==0 && m==1) m = 0;
-        return {
-            sum: s,
-            mult: m
-        };
-    }
+        // пример, наглядно демонстрирующий работу функции
+        // const departments = [12, 7, 13, 13, 5, 6, 9, 12, 4, 5, 6, 2, 1];
+        // const dep_intervals = this.convert_to_intervals(new Set(departments.sort(function(a, b) {
+        //     return a - b;
+        //   })));
 
-    sumOfSquares(arr){
-        let res = 0;
-        for(let i = 0; i<arr.length; i++){
-            res+=arr[i]*arr[i];
-        }
-        return res;
+        const dep_intervals = convertToIntervals(new Set(departmentArr.sort(function(a, b) {
+            return a - b;
+          })));
+        document.getElementById("dep_intervals").innerHTML = dep_intervals
     }
 }
