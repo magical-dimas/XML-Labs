@@ -14,8 +14,8 @@ export class FacultyComponent {
                         <div class="col-md-8">
                             <div class="card_body">
                                 <h5 class="card_title">${data.title}</h5>
-                                <p class="card_text">${data.description}</p>
-                                <p class="department_num">Количество кафедр на факультете: ${data.num}</p>
+                                <p class="card_text" style="max-width:90%;">${data.description}</p>
+                                <p class="department_num">Количество кафедр на факультете: ${data.departments}</p>
                             </div>
                         </div>
                     </div>

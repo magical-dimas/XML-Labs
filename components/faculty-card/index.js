@@ -10,8 +10,8 @@ export class FacultyCardComponent {
                     <img class="card_img_top" src="${data.src}" alt="картинка">
                     <div class="card_body">
                         <h5 class="card_title">${data.title}</h5>
-                        <p class="card_text">${data.text}</p>
-                        <p class="card_text">Количество кафедр: ${data.num}</p>
+                        <p class="card_text">${data.brief_text}</p>
+                        <p class="card_text">Количество кафедр: ${data.departments}</p>
                         <div style="display: flex; justify-content:space-between;">
                             <button class="btn" id="click-card-${data.id}" data-id="${data.id}">Подробнее</button>
                             <button class="btn" id="delete-card-${data.id}" data-id="${data.id}">Удалить</button>
