@@ -28,8 +28,19 @@ export function convertToIntervals(set){
     return intervals
 }
 
-export function anagram(arr){
-
+export function findAnagrams(words){
+    let anagrams = {}
+    words.forEach((word)=>{
+        const sorted = word.toLowerCase().split("").sort().join("")
+        if(!anagrams[sorted]) {
+            anagrams[sorted] = []
+        }
+        word = word.charAt(0).toUpperCase()+word.slice(1).toLowerCase()
+        if(!anagrams[sorted].includes(word)){
+            anagrams[sorted].push(word)
+        }
+    })
+    return Object.values(anagrams).filter(group => group.length >= 2).map(group => "["+group.sort().join(', ')+"]").sort()
 }
 
 export function getSumAndMultOfArray(arr){

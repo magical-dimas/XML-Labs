@@ -37,6 +37,14 @@ export class Model{
                 description: "Радиоэлектроника и лазерная техника являются самыми передовыми отраслями науки и техники, определяющими научно-технический прогресс и проектирование новейших приборов, часто не имеющих аналогов в мире.",
                 departments: 6
             },
+            {
+                id: 5,
+                src: "https://bmstu.ru/assets/images/logo/logo@2x.png",
+                title: "МГТУ Анаграммы",
+                brief_text: "Карточка для демонстрации работы поиска анаграмм",
+                description: "Колба, бокал балок, нора. Рано, кулак. Кукла. Василий",
+                departments: 1
+            },
         ]
         return data
     }
@@ -46,9 +54,19 @@ export class Model{
     }
 
     getDepartmentData(min_filter, max_filter){
-        var departmentArr = []
+        let departmentArr = []
         this.filter(min_filter, max_filter).forEach((item)=>{departmentArr.push(item.departments)})
         return departmentArr
+    }
+
+    gerWords(min_filter, max_filter){
+        let words = []
+        this.filter(min_filter, max_filter).forEach((d)=>{
+            d.description.replaceAll(".", "").replaceAll(",", "").split(" ").forEach((word)=>{
+                words.push(word)
+            })
+        })
+        return words
     }
 
     filter(min_filter, max_filter){

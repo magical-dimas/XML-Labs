@@ -1,7 +1,7 @@
 import { FacultyCardComponent } from "../../components/faculty-card/index.js";
 import { FacultyPage } from "../faculty/index.js";
 import { model } from "../../main.js";
-import { getSumAndMultOfArray, convertToIntervals, sumOfSquares } from "../../functions/functions.js";
+import { getSumAndMultOfArray, convertToIntervals, sumOfSquares, anagram } from "../../functions/functions.js";
 
 export class MainPage {
     constructor(parent, model) {
@@ -36,6 +36,10 @@ export class MainPage {
                     <div style="text-align: center;">
                         <p class="plain_text" style="font-weight: bolder;"> Интервалы количества кафедр, принадлежащих факультетам: </p>
                         <p class="result" id="dep_intervals"></p>
+                    </div>
+                    <div style="text-align: center;">
+                        <p class="plain_text" style="font-weight: bolder;"> Анаграммы, встречающиеся в описаниях: </p>
+                        <p class="result" id="anagrams"></p>
                     </div>
                     </div>
                     </div>
@@ -118,5 +122,8 @@ export class MainPage {
             return a - b;
           })));
         document.getElementById("dep_intervals").innerHTML = dep_intervals
+
+        const anagrams = findAnagrams(model.gerWords(this.min_filter, this.max_filter)).join(", ")
+        document.getElementById("anagrams").innerHTML = (anagrams.length>0) ? anagrams : "Анаграммы не обнаружены"
     }
 }
