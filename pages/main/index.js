@@ -1,7 +1,7 @@
 import { FacultyCardComponent } from "../../components/faculty-card/index.js";
 import { FacultyPage } from "../faculty/index.js";
 import { model } from "../../main.js";
-import { getSumAndMultOfArray, convertToIntervals, sumOfSquares, anagram } from "../../functions/functions.js";
+import { getSumAndMultOfArray, convertToIntervals, sumOfSquares, findAnagrams } from "../../functions/functions.js";
 
 export class MainPage {
     constructor(parent, model) {
