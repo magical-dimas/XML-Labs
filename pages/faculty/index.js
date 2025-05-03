@@ -1,7 +1,8 @@
 import {FacultyComponent} from "../../components/faculty-card-enlarged/index.js";
 import {BackButtonComponent} from "../../components/back-button/index.js";
 import {MainPage} from "../main/index.js";
-import { model } from "../../main.js";
+import { ajax } from "../../modules/ajax.js";
+import { facultyURLs } from "../../modules/facultyURLs.js";
 
 export class FacultyPage {
     constructor(parent, id) {
@@ -21,6 +22,17 @@ export class FacultyPage {
         )
     }
 
+    getData() {
+        ajax.get(facultyURLs.getFacultyById(this.id), (data) => {
+                    this.renderData(data);
+        })
+    }
+
+    renderData(item) {
+        const faculty = new FacultyComponent(this.pageRoot)
+        faculty.render(item)
+    }
+
     clickBack() {
         const mainPage = new MainPage(this.parent)
         mainPage.render()
@@ -33,9 +45,7 @@ export class FacultyPage {
     
         const backButton = new BackButtonComponent(this.pageRoot)
         backButton.render(this.clickBack.bind(this))
-    
-        const data = model.getData().find((d) => d.id == this.id)
-        const faculty_information = new FacultyComponent(this.pageRoot)
-        faculty_information.render(data)
+
+        this.getData()
     }
 }

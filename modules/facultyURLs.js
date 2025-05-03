@@ -15,13 +15,13 @@ class FacultyURLs {
         return `${this.baseUrl}/faculties`;
     }
 
-    removeFacultyById() {
+    removeFacultyById(id) {
         return `${this.baseUrl}/faculties/${id}`;
     }
 
-    updateFacultyById() {
+    updateFacultyById(id) {
         return `${this.baseUrl}/faculties/${id}`;
     }
 }
 
-export const stockUrls = new FacultyURLs();
+export const facultyURLs = new FacultyURLs();

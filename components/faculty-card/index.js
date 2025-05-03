@@ -6,7 +6,7 @@ export class FacultyCardComponent {
     getHTML(data) {
         return (
             `
-                <div class="card"">
+                <div class="card">
                     <img class="card_img_top" src="${data.src}" alt="картинка">
                     <div class="card_body">
                         <h5 class="card_title">${data.title}</h5>

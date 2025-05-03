@@ -1,12 +1,14 @@
 import { FacultyCardComponent } from "../../components/faculty-card/index.js";
 import { FacultyPage } from "../faculty/index.js";
-import { model } from "../../main.js";
+import { ajax } from "../../modules/ajax.js";
+import { facultyURLs } from "../../modules/facultyURLs.js";
 
 export class MainPage {
     constructor(parent, model) {
-        this.parent = parent;
-        this.min_filter = 0;
-        this.max_filter = 100;
+        this.parent = parent
+        this.min_filter = 0
+        this.max_filter = 100
+        this.last_index = 4
     }
 
     get pageRoot() {
@@ -30,6 +32,12 @@ export class MainPage {
         )
     }
 
+    getData() {
+        ajax.get(facultyURLs.getFaculties(), (data) => {
+            this.renderData(data.filter((element)=>{return (element.departments>=this.min_filter && element.departments<=this.max_filter)}));
+        })
+    }
+
     render() {
         this.parent.innerHTML = ''
         const html = this.getHTML()
@@ -43,12 +51,12 @@ export class MainPage {
         inp_max.addEventListener("input", this.updateMax.bind(this))
         new_card_btn.addEventListener('click', this.addCard.bind(this))
 
-        this.drawCards()
+        this.getData()
     }
 
-    drawCards(){
-        this.pageRoot.querySelector('.gallery').innerHTML = "";
-        model.filter(this.min_filter, this.max_filter).forEach((item)=>{
+    renderData(items) {
+        this.pageRoot.querySelector('.gallery').innerHTML = ""
+        items.forEach((item) => {
             const facultyCard = new FacultyCardComponent(this.pageRoot.querySelector('.gallery'))
             facultyCard.render(item, this.openCard.bind(this), this.removeCard.bind(this))
         })
@@ -57,13 +65,13 @@ export class MainPage {
     updateMin(e){
         this.min_filter = parseInt(e.target.value)
         if(e.target.value=="") this.min_filter = 0
-        this.drawCards()
+        this.getData()
     }
 
     updateMax(e){
         this.max_filter = parseInt(e.target.value)
         if(e.target.value=="") this.max_filter = 100
-        this.drawCards()
+        this.getData()
     }
 
     openCard(e) {
@@ -73,12 +81,29 @@ export class MainPage {
     }
 
     addCard(){
-        model.newFaculty()
-        this.drawCards()
+        ajax.get(facultyURLs.getFaculties(), (data) => {
+            this.last_index = data[data.length-1]?data[data.length-1].id+1:1
+        })
+        setTimeout(() => {
+        const emptyCardData = {
+            id: this.last_index,
+            src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb0JO9YprlouHhVUTpNTtlDdmeLiGv1CWFBA&s",
+            title: "Факультет",
+            brief_text: "Краткое описание факультета",
+            description: "Длинное описание факльтета",
+            departments: 0
+        }
+        ajax.post(facultyURLs.createFaculty(), emptyCardData, ()=>{})
+        if(this.min_filter==0){
+        const facultyCard = new FacultyCardComponent(this.pageRoot.querySelector('.gallery'))
+        facultyCard.render(emptyCardData, this.openCard.bind(this), this.removeCard.bind(this))
+        }
+        this.last_index++
+        }, 500)
     }
 
     removeCard(e) {
-        model.removeFaculty(e.target.dataset.id-1)
-        this.drawCards()
+        ajax.delete(facultyURLs.removeFacultyById(e.target.dataset.id), () => {})
+        e.target.parentNode.parentNode.parentNode.remove()
     }
 }

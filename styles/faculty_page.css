@@ -7,6 +7,6 @@
 
   .card_img_enlarged{
     width: 180px;
-    height: 220px;
+    height: auto;
     object-fit:scale-down;
 }
