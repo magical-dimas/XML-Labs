@@ -16,8 +16,8 @@ body{
 
 .inp_form{
   display: flex;
-  flex-direction: row;
-  gap: 5px;
+  flex-direction: column;
+  gap: 8px;
 
   padding: 10px;
   margin-bottom: 15px;
@@ -33,7 +33,7 @@ body{
   border: 2px solid #e7edf3;
   transition: transform 0.2s;
   width: 295px;
-  height: 570px;
+  height: 630px;
   padding: 20px;
   margin: 10px;
   border-radius: 10px;
@@ -94,7 +94,7 @@ body{
   font-size: 1.7rem;
 }
 
-.inp_num{
+.input{
   height: 40px;
   margin: auto;
   border-radius: 5px;

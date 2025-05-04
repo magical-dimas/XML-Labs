@@ -7,7 +7,7 @@ export class FacultyComponent {
         return (
             `
                 <div class="card enlarged">
-                    <div class="row g-0">
+                    <div class="row">
                         <div class="col-md-4">
                             <img src="${data.src}" class="card_img_enlarged" alt="картинка">
                         </div>

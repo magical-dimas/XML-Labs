@@ -7,6 +7,10 @@ class FacultyURLs {
         return `${this.baseUrl}/faculties`;
     }
 
+    getFilteredFaculties(filter) {
+        return `${this.baseUrl}/faculties?title=${filter}`;
+    }
+
     getFacultyById(id) {
         return `${this.baseUrl}/faculties/${id}`;
     }

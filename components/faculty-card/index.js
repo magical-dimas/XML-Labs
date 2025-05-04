@@ -12,9 +12,12 @@ export class FacultyCardComponent {
                         <h5 class="card_title">${data.title}</h5>
                         <p class="card_text">${data.brief_text}</p>
                         <p class="card_text">Количество кафедр: ${data.departments}</p>
-                        <div style="display: flex; justify-content:space-between;">
+                        <div style="display: flex; flex-direction: column; gap:8px">
+                        <div style="display: flex; justify-content:space-between; width: 260px">
                             <button class="btn" id="click-card-${data.id}" data-id="${data.id}">Подробнее</button>
                             <button class="btn" id="delete-card-${data.id}" data-id="${data.id}">Удалить</button>
+                        </div>
+                        <button class="btn" style="width:230px" id="redact-card-${data.id}" data-id="${data.id}">Редактировать запись</button>
                         </div>
                     </div>
                 </div>
@@ -22,18 +25,21 @@ export class FacultyCardComponent {
         )
     }
     
-    addListeners(data, details_listener, rm_listener) {
+    addListeners(data, details_listener, rm_listener, red_listener) {
         document
             .getElementById(`click-card-${data.id}`)
             .addEventListener("click", details_listener)
         document
             .getElementById(`delete-card-${data.id}`)
             .addEventListener("click", rm_listener)
+        document
+            .getElementById(`redact-card-${data.id}`)
+            .addEventListener("click", red_listener)
     }
     
-    render(data, details_listener, rm_listener) {
+    render(data, details_listener, rm_listener, red_listener) {
         const html = this.getHTML(data)
         this.parent.insertAdjacentHTML('beforeend', html)
-        this.addListeners(data, details_listener, rm_listener)
+        this.addListeners(data, details_listener, rm_listener, red_listener)
     }
 }
