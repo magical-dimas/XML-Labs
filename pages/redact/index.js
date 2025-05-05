@@ -1,8 +1,7 @@
-import {FacultyComponent} from "../../components/faculty-card-enlarged/index.js";
-import {BackButtonComponent} from "../../components/back-button/index.js";
-import {MainPage} from "../main/index.js";
-import { ajax } from "../../modules/ajax.js";
-import { facultyURLs } from "../../modules/facultyURLs.js";
+import {FacultyComponent} from "../../components/faculty-card-enlarged/index.js"
+import {BackButtonComponent} from "../../components/back-button/index.js"
+import {MainPage} from "../main/index.js"
+import { facultyURLs } from "../../modules/facultyURLs.js"
 
 export class RedactFacultyPage {
     constructor(parent, id) {
@@ -14,7 +13,7 @@ export class RedactFacultyPage {
         return document.getElementById('redact_page')
     }
 
-    getData() {
+    async getData() {
         if(this.id==-1) this.renderData({
             src: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSb0JO9YprlouHhVUTpNTtlDdmeLiGv1CWFBA&s",
             title: "Название факультета",
@@ -22,9 +21,15 @@ export class RedactFacultyPage {
             description: "Это несколько более длинное описание факультета",
             departments: 0
         })
-        else ajax.get(facultyURLs.getFacultyById(this.id), (data) => {
-                    this.renderData(data)
-        })
+        else try{const response = await fetch(facultyURLs.getFacultyById(this.id))
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`)
+        }
+        const data = await response.json()
+        this.renderData(data)
+        } catch(e){
+        console.error('Failed to get faculty data:', e)
+        }
     }
 
     getHTML() {
@@ -91,7 +96,7 @@ export class RedactFacultyPage {
         this.getData()
     }
 
-    saveData(){
+    async saveData(){
         const titleInp = document.getElementById("title_inp")
         const srcInp = document.getElementById("src_inp")
         const bdescInp = document.getElementById("bdesc_inp")
@@ -103,12 +108,45 @@ export class RedactFacultyPage {
             title: titleInp.value,
             brief_text: bdescInp.value,
             description: descInp.value,
-            departments: depsInp.value
+            departments: depsInp.value==""? 0 : depsInp.value
         }
 
-        if(this.id == -1) ajax.get(facultyURLs.getFaculties(), ((sent)=>{ajax.post(facultyURLs.createFaculty(), {id: sent[sent.length-1].id+1, ...data}, ()=>{ 
-            this.id = sent[sent.length-1].id+1
-            this.render()})}))
-        else ajax.patch(facultyURLs.updateFacultyById(this.id), data, ()=>{this.render()})
+        if(this.id == -1) try{
+            const response = await fetch(facultyURLs.getFaculties())
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`)
+            }
+            const json = await response.json()
+            const new_index = json.length>0? json[json.length-1].id+1 : 1
+            const response_post = await fetch(facultyURLs.createFaculty(), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({id: new_index, ...data})
+            });
+            if (!response_post.ok) {
+                throw new Error(`HTTP error! Status: ${response_post.status}`)
+            }
+            this.id = new_index
+            this.render()
+        } catch(e){
+            console.error('Failed to add new faculty:', e)
+        }
+        else try{
+            const response_patch = await fetch(facultyURLs.updateFacultyById(this.id), {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+            });
+            if (!response_patch.ok) {
+                throw new Error(`HTTP error! Status: ${response_patch.status}`)
+            }
+            this.render()
+        } catch(e){
+            console.error('Failed to update faculty data:', e)
+        }
     }
 }

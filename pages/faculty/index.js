@@ -1,8 +1,7 @@
-import {FacultyComponent} from "../../components/faculty-card-enlarged/index.js";
-import {BackButtonComponent} from "../../components/back-button/index.js";
-import {MainPage} from "../main/index.js";
-import { ajax } from "../../modules/ajax.js";
-import { facultyURLs } from "../../modules/facultyURLs.js";
+import {FacultyComponent} from "../../components/faculty-card-enlarged/index.js"
+import {BackButtonComponent} from "../../components/back-button/index.js"
+import {MainPage} from "../main/index.js"
+import { facultyURLs } from "../../modules/facultyURLs.js"
 
 export class FacultyPage {
     constructor(parent, id) {
@@ -22,10 +21,17 @@ export class FacultyPage {
         )
     }
 
-    getData() {
-        ajax.get(facultyURLs.getFacultyById(this.id), (data) => {
-                    this.renderData(data);
-        })
+    async getData() {
+        try{
+        const response = await fetch(facultyURLs.getFacultyById(this.id))
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`)
+            }
+            const data = await response.json()
+            this.renderData(data)
+        } catch(e){
+            console.error('Failed to get faculty data:', e)
+        }
     }
 
     renderData(item) {

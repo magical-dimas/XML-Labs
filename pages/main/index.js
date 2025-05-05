@@ -1,6 +1,5 @@
 import { FacultyCardComponent } from "../../components/faculty-card/index.js";
 import { FacultyPage } from "../faculty/index.js";
-import { ajax } from "../../modules/ajax.js";
 import { facultyURLs } from "../../modules/facultyURLs.js";
 import { RedactFacultyPage } from "../redact/index.js";
 
@@ -9,7 +8,6 @@ export class MainPage {
         this.parent = parent
         this.min_filter = 0
         this.max_filter = 100000
-        this.last_index = 4
         this.title_filter = ""
     }
 
@@ -40,15 +38,25 @@ export class MainPage {
         )
     }
 
-    getData() {
-        if(!this.title_filter){
-            ajax.get(facultyURLs.getFaculties(), (data) => {
-                this.renderData(data.filter((element)=>{return (element.departments>=this.min_filter && element.departments<=this.max_filter)}));
-         })
-        } else{
-            ajax.get(facultyURLs.getFilteredFaculties(this.title_filter), (data) => {
-                this.renderData(data.filter((element)=>{return (element.departments>=this.min_filter && element.departments<=this.max_filter)}));
-            })
+    async getData() {
+        if(!this.title_filter) try{
+            const response = await fetch(facultyURLs.getFaculties());
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            this.renderData(data.filter((element)=>{return (element.departments>=this.min_filter && element.departments<=this.max_filter)}))
+            } catch(e){
+                console.error('Failed to get faculty data:', e);
+        } else try{
+            const response = await fetch(facultyURLs.getFilteredFaculties(this.title_filter));
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            const data = await response.json();
+            this.renderData(data.filter((element)=>{return (element.departments>=this.min_filter && element.departments<=this.max_filter)}))
+            } catch(e){
+                console.error('Failed to get filtered faculty data:', e);
         }
     }
 
@@ -86,7 +94,7 @@ export class MainPage {
 
     updateMax(e){
         this.max_filter = parseInt(e.target.value)
-        if(e.target.value=="") this.max_filter = 100
+        if(e.target.value=="") this.max_filter = 100000
         this.getData()
     }
 
@@ -112,8 +120,17 @@ export class MainPage {
         redactFacultyPage.render()
     }
 
-    removeCard(e) {
-        ajax.delete(facultyURLs.removeFacultyById(e.target.dataset.id), () => {})
-        e.target.parentNode.parentNode.parentNode.parentNode.remove()
+    async removeCard(e) {
+        try{
+            const response_delete = await fetch(facultyURLs.removeFacultyById(e.target.dataset.id), {
+            method: 'DELETE'
+            });
+            if (!response_delete.ok) {
+                throw new Error(`HTTP error! Status: ${response_delete.status}`)
+            }
+        } catch(e){
+            console.error('Failed to update faculty data:', e)
+        }
+        this.getData()
     }
 }
