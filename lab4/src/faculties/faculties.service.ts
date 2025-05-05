@@ -9,7 +9,7 @@ export class FacultiesService {
   constructor(private fileService: FileService<Faculty[]>) {}
   create(createFacultyDto: CreateFacultyDto) {
     const faculties = this.fileService.read();
-    const faculty = { ...createFacultyDto, id: faculties.length + 1 };
+    const faculty = { ...createFacultyDto, id:  (faculties[faculties.length-1]) ? faculties[faculties.length-1].id + 1 : 1 };
     this.fileService.add(faculty);
     return faculty;
   }
