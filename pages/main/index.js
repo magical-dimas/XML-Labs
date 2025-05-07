@@ -1,7 +1,7 @@
 import { FacultyCardComponent } from "../../components/faculty-card/index.js";
 import { FacultyPage } from "../faculty/index.js";
 import { model } from "../../main.js";
-import { getSumAndMultOfArray, convertToIntervals, sumOfSquares, findAnagrams } from "../../functions/functions.js";
+import { getSumAndMultOfDepartments, convertDepartmentsToIntervals, sumOfSquaresOfDepartments, findAnagramsInDescriptions } from "../../functions/functions.js";
 
 export class MainPage {
     constructor(parent, model) {
@@ -108,9 +108,9 @@ export class MainPage {
 
     updateStatistics(){
         var departmentArr = model.getDepartmentData(this.min_filter, this.max_filter)
-        document.getElementById("sum").innerHTML = "Сумма - "+getSumAndMultOfArray(departmentArr).sum
-        document.getElementById("mul").innerHTML = "Произведение - "+getSumAndMultOfArray(departmentArr).mult
-        document.getElementById("sq_sum").innerHTML = "Сумма квадратов - "+sumOfSquares(departmentArr)
+        document.getElementById("sum").innerHTML = "Сумма - "+getSumAndMultOfDepartments(departmentArr).sum
+        document.getElementById("mul").innerHTML = "Произведение - "+getSumAndMultOfDepartments(departmentArr).mult
+        document.getElementById("sq_sum").innerHTML = "Сумма квадратов - "+sumOfSquaresOfDepartments(departmentArr)
 
         // пример, наглядно демонстрирующий работу функции
         // const departments = [12, 7, 13, 13, 5, 6, 9, 12, 4, 5, 6, 2, 1];
@@ -118,12 +118,12 @@ export class MainPage {
         //     return a - b;
         //   })));
 
-        const dep_intervals = convertToIntervals(new Set(departmentArr.sort(function(a, b) {
+        const dep_intervals = convertDepartmentsToIntervals(new Set(departmentArr.sort(function(a, b) {
             return a - b;
           })));
         document.getElementById("dep_intervals").innerHTML = dep_intervals
 
-        const anagrams = findAnagrams(model.gerWords(this.min_filter, this.max_filter)).join(", ")
+        const anagrams = findAnagramsInDescriptions(model.gerWords(this.min_filter, this.max_filter)).join(", ")
         document.getElementById("anagrams").innerHTML = (anagrams.length>0) ? anagrams : "Анаграммы не обнаружены"
     }
 }

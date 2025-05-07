@@ -1,4 +1,4 @@
-export function convertToIntervals(set){
+export function convertDepartmentsToIntervals(set){
     let iter = set.values()
     let unit = iter.next()
     let prev = unit.value
@@ -28,7 +28,7 @@ export function convertToIntervals(set){
     return intervals
 }
 
-export function findAnagrams(words){
+export function findAnagramsInDescriptions(words){
     let anagrams = {}
     words.forEach((word)=>{
         const sorted = word.toLowerCase().split("").sort().join("")
@@ -43,7 +43,7 @@ export function findAnagrams(words){
     return Object.values(anagrams).filter(group => group.length >= 2).map(group => "["+group.sort().join(', ')+"]").sort()
 }
 
-export function getSumAndMultOfArray(arr){
+export function getSumAndMultOfDepartments(arr){
     let s = 0;
     let m = 1;
     for(let i = 0; i<arr.length; i++){
@@ -57,7 +57,7 @@ export function getSumAndMultOfArray(arr){
     };
 }
 
-export function sumOfSquares(arr){
+export function sumOfSquaresOfDepartments(arr){
     let res = 0;
     for(let i = 0; i<arr.length; i++){
         res+=arr[i]*arr[i]
